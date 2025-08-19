@@ -125,7 +125,7 @@ export default function PokemonDetail() {
   const modelUrl = selectedForm.model;
 
   return (
-      <div className="min-h-screen flex flex-col md:flex-row bg-gray-100 font-sans">
+      <div className="max-h-screen flex flex-col md:flex-row bg-gray-100 font-sans">
         {/* Left side: 3D Model */}
         <div className="h-[50vh] md:h-auto md:flex-1 bg-gradient-to-b from-red-600 to-red-800 flex items-center justify-center p-4 md:p-6 relative">
           <div className="w-full h-full rounded-2xl shadow-2xl flex items-center justify-center border-8 border-gray-300 overflow-hidden">
@@ -148,9 +148,11 @@ export default function PokemonDetail() {
 
         {/* Right side: Details */}
         <div className="flex-1 bg-gradient-to-b from-gray-100 to-gray-300 p-4 md:p-8 flex flex-col justify-between overflow-y-auto relative">
-          <Link href="/" className="absolute top-4 left-4 px-4 py-2 bg-gray-300 text-gray-800 font-semibold rounded-lg hover:bg-gray-400 transition-colors z-10">
-            &larr; Back to Main Menu
-          </Link>
+          <div className="mb-5">
+            <Link href="/" className=" px-4 py-2 bg-gray-300 text-gray-800 font-semibold rounded-lg hover:bg-gray-400 transition-colors z-10">
+              &larr; Back to Main Menu
+            </Link>
+          </div>
           <div className="flex-grow flex flex-col justify-center pt-12 md:pt-0">
             <div className="flex items-center gap-3 md:gap-4 mb-4">
               <img src={pokemonDetails.sprites.front_default} alt={selectedForm.name} className="w-12 h-12 md:w-16 md:h-16 bg-white/50 rounded-full border-2 border-gray-400" />
