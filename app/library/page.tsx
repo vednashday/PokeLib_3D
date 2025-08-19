@@ -9,7 +9,6 @@ const Library = () => {
   const [pokemon, setPokemon] = useState<{ name: string; url: string }[]>([]);
 
   useEffect(() => {
-    // Fetch first 151 Pokémon for demo
     fetch("https://pokeapi.co/api/v2/pokemon?limit=151")
       .then((res) => res.json())
       .then((data) => {
@@ -21,7 +20,6 @@ const Library = () => {
     p.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  // Helper to extract ID from URL
   const getIdFromUrl = (url: string) => {
     const parts = url.split("/").filter(Boolean);
     return parts[parts.length - 1];

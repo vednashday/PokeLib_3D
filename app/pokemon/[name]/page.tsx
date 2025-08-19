@@ -8,7 +8,6 @@ import React, { useEffect, useState, Suspense, useMemo, Component, ErrorInfo } f
 import { Box3, Vector3 } from "three";
 import Loader from "../../../src/components/Loader";
 
-// --- TYPE DEFINITIONS (Unchanged) ---
 type PokemonForm = { name: string; model: string; formName: string };
 type Pokemon3D = { id: number; forms: PokemonForm[] };
 type PokemonStat = { base_stat: number; stat: { name: string; }; };
@@ -16,10 +15,8 @@ type PokemonType = { type: { name: string; }; };
 type PokemonAbility = { ability: { name: string; }; };
 type PokemonDetails = { id: number; stats: PokemonStat[]; types: PokemonType[]; abilities: PokemonAbility[]; sprites: { front_default: string; }; };
 
-// --- HELPER FOR TYPE COLORS (Unchanged) ---
 const typeColors: { [key: string]: string } = { /* ... */ };
 
-// --- ERROR BOUNDARY ---
 class ModelErrorBoundary extends Component<{ children: React.ReactNode }, { hasError: boolean }> {
   constructor(props: { children: React.ReactNode }) { super(props); this.state = { hasError: false }; }
   static getDerivedStateFromError(error: Error) { return { hasError: true }; }
@@ -36,7 +33,6 @@ class ModelErrorBoundary extends Component<{ children: React.ReactNode }, { hasE
   }
 }
 
-// --- 3D MODEL COMPONENT ---
 function PokemonModel({ url }: { url: string }) {
   const { scene } = useGLTF(url);
   const { scale, position } = useMemo(() => {
@@ -51,11 +47,9 @@ function PokemonModel({ url }: { url: string }) {
   return <primitive object={scene} scale={scale} position={position} />;
 }
 
-// --- MAIN PAGE COMPONENT ---
 export default function PokemonDetail() {
   const { name } = useParams<{ name: string }>();
 
-  // (All state and useEffect hooks remain unchanged)
   const [pokemon, setPokemon] = useState<Pokemon3D | null>(null);
   const [selectedForm, setSelectedForm] = useState<PokemonForm | null>(null);
   const [pokemonDetails, setPokemonDetails] = useState<PokemonDetails | null>(null);
@@ -105,7 +99,6 @@ export default function PokemonDetail() {
       .finally(() => setIsLoading(false));
   }, [pokemon]);
 
-  // --- RENDER LOGIC ---
   if (isLoading) {
     return <Loader />;
   }
