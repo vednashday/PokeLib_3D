@@ -26,7 +26,7 @@ const Library = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-red-800 to-gray-100 p-10 ">
+    <div className="min-h-screen bg-gradient-to-b from-red-900 via-red-800 to-gray-900 p-10 font-mono">
       {/* Search */}
       <div className="relative flex justify-around mb-10">
         <input
@@ -34,17 +34,23 @@ const Library = () => {
           placeholder="Search Pokémon..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-[60%] bg-zinc-200 text-red-700 text-xl font-extrabold p-4 rounded-full  border-gray-800 border-4 shadow-9xl focus:outline-none focus:ring-7 focus:ring-red-800"
+          className="w-[60%] bg-yellow-200 text-red-900 text-xl font-extrabold p-4 
+          rounded-none border-4 border-black shadow-[4px_4px_0px_#000] 
+          focus:outline-none focus:ring-4 focus:ring-yellow-400"
         />
-        <Link href="/" className="flex px-4 py-2 bg-zinc-200 text-red-700 font-extrabold items-center text-center border-gray-800 border-4 shadow-9xl justify-center text-xl rounded-full hover:bg-gray-400 transition-colors z-10">
-            &larr; Back to Main Menu
+        <Link
+          href="/"
+          className="flex px-6 py-3 bg-yellow-200 text-red-900 font-extrabold 
+          items-center text-center border-4 border-black shadow-[4px_4px_0px_#000] 
+          text-xl rounded-none hover:bg-yellow-300 transition-colors"
+        >
+          &larr; Back
         </Link>
       </div>
 
       {/* Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 mt-20">
         {filteredPokemon.map((p, idx) => {
-            
           const id = getIdFromUrl(p.url);
           return (
             <Link href={`/pokemon/${p.name}`} key={p.name}>
@@ -52,20 +58,30 @@ const Library = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.02 }}
-                className="bg-zinc-500 rounded-2xl shadow-md p-4 flex flex-col items-center hover:shadow-xl transition"
+                className="relative bg-zinc-800 border-4 border-black 
+                rounded-none shadow-[6px_6px_0px_#000] 
+                p-4 flex flex-col items-center group cursor-pointer 
+                overflow-hidden"
               >
+                {/* Shine Effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent 
+                translate-x-[-100%] group-hover:translate-x-[100%] 
+                transition-transform duration-700 skew-x-12" />
+
                 <img
                   src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`}
                   alt={p.name}
-                  className="w-24 h-24"
+                  className="w-24 h-24 pixelated"
                 />
-                <h3 className="mt-3 text-lg font-bold capitalize">{p.name}</h3>
+                <h3 className="mt-3 text-lg font-bold capitalize text-yellow-300">
+                  {p.name}
+                </h3>
               </motion.div>
             </Link>
           );
         })}
       </div>
-      </div>
+    </div>
   );
 };
 

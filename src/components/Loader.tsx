@@ -18,40 +18,11 @@ function Pokeball(props: JSX.IntrinsicElements["group"]) {
 }
 
 function Scene() {
-  const ring1 = useRef<Group>(null);
-  const ring2 = useRef<Group>(null);
-  const ring3 = useRef<Group>(null);
-
-  useFrame((state, delta) => {
-    if (ring1.current && ring2.current && ring3.current) {
-      ring1.current.rotation.x = ring1.current.rotation.y += delta * 0.4;
-      ring2.current.rotation.x = ring2.current.rotation.y += delta * 0.6;
-      ring3.current.rotation.y += delta * 0.8;
-    }
-  });
-
   return (
     <>
       <ambientLight intensity={1.5} />
       <directionalLight position={[5, 5, 5]} intensity={2} />
-      
       <Pokeball />
-
-      <group ref={ring1}>
-        <Ring args={[0.9, 1, 64]} rotation={[Math.PI / 2, 0, 0]}>
-          <meshStandardMaterial color="#0077ff" emissive="#0077ff" emissiveIntensity={2} toneMapped={false} />
-        </Ring>
-      </group>
-      <group ref={ring2}>
-        <Ring args={[1.2, 1.3, 64]} rotation={[Math.PI / 2, Math.PI / 3, 0]}>
-          <meshStandardMaterial color="#00aaff" emissive="#00aaff" emissiveIntensity={2} toneMapped={false} />
-        </Ring>
-      </group>
-      <group ref={ring3}>
-        <Ring args={[1.5, 1.6, 64]} rotation={[Math.PI / 2, Math.PI / 1.5, 0]}>
-          <meshStandardMaterial color="#00ccff" emissive="#00ccff" emissiveIntensity={2} toneMapped={false} />
-        </Ring>
-      </group>
     </>
   );
 }
