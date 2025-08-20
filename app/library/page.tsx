@@ -3,6 +3,9 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+
 
 const Library = () => {
   const [search, setSearch] = useState("");
@@ -12,6 +15,7 @@ const Library = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const perPage = 20;
+  const router = useRouter();
 
   useEffect(() => {
     fetch("https://pokeapi.co/api/v2/pokemon?limit=1000")
@@ -81,22 +85,44 @@ const Library = () => {
     return pages;
   };
 
+  const handleSurpriseMe = () => {
+    if (filteredPokemon.length === 0) return;
+    const random = filteredPokemon[Math.floor(Math.random() * filteredPokemon.length)];
+    router.push(`/pokemon/${random.name}`);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-red-900 via-red-800 to-gray-900 p-10 font-mono">
       <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
-        <input
-          type="text"
-          placeholder="Search Pokémon..."
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            setCurrentPage(1);
-          }}
-          className="w-[60%] bg-yellow-200 text-red-900 text-xl font-extrabold p-4
-          rounded-none border-4 border-black shadow-[4px_4px_0px_#000]
-          focus:outline-none focus:ring-4 focus:ring-yellow-400"
-        />
+        {/* Search + Surprise Me button */}
+        <div className="flex w-[60%]">
+          <input
+            type="text"
+            placeholder="Search Pokémon..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="flex-grow bg-yellow-200 text-red-900 text-xl font-extrabold p-4
+            rounded-none border-4 border-black shadow-[4px_4px_0px_#000]
+            focus:outline-none focus:ring-4 focus:ring-yellow-400"
+          />
+          <button
+            onClick={handleSurpriseMe}
+            className="ml-2 px-4 py-2 bg-pink-400 text-black font-bold border-4 border-black shadow-[4px_4px_0px_#000] hover:bg-pink-500 transition-colors"
+          >
+            <Image
+              src="/random.png"
+              width={32}
+              height={32}
+              className="text-black"
+              alt="Random Pokemon"
+            />
+          </button>
+        </div>
 
+        {/* Type filter */}
         <select
           value={selectedType}
           onChange={(e) => {
@@ -113,6 +139,7 @@ const Library = () => {
           ))}
         </select>
 
+        {/* Back button */}
         <Link
           href="/"
           className="px-6 py-3 bg-yellow-200 text-red-900 font-extrabold 
@@ -123,6 +150,7 @@ const Library = () => {
         </Link>
       </div>
 
+      {/* Pokémon Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 mt-10">
         {paginatedPokemon.map((p, idx) => {
           const id = getIdFromUrl(p.url);
@@ -156,7 +184,7 @@ const Library = () => {
         })}
       </div>
 
-      {/* Pagination Controls */}
+      {/* Pagination */}
       <div className="flex justify-center mt-10 gap-2 flex-wrap">
         <button
           disabled={currentPage === 1}
@@ -199,3 +227,4 @@ const Library = () => {
 };
 
 export default Library;
+
