@@ -4,8 +4,9 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls, useGLTF, Grid } from "@react-three/drei";
 import React, { useEffect, useState, Suspense, useMemo, Component, ErrorInfo } from "react";
 import { Box3, Vector3 } from "three";
-import Loader from "../../../src/components/Loader";
+import { useParams } from "next/navigation";
 import Link from "next/link";
+import Loader from "../../../src/components/Loader"; // Assuming Loader is in src/components/Loader.tsx
 
 // --- TYPE DEFINITIONS ---
 type PokemonForm = { name: string; model: string; formName: string };
@@ -39,7 +40,6 @@ const typeColors: { [key: string]: string } = {
 
 
 // --- UI COMPONENTS ---
-
 
 
 
@@ -77,14 +77,8 @@ function PokemonModel({ url }: { url: string }) {
 
 // --- MAIN PAGE COMPONENT ---
 export default function PokemonDetail() {
-  // Replaced next/navigation with a simple URL parser to work in any environment.
-  // It defaults to 'bulbasaur' if the name isn't in the URL path.
-  const name = useMemo(() => {
-      if (typeof window === 'undefined') return 'bulbasaur';
-      const pathParts = window.location.pathname.split('/');
-      return pathParts[pathParts.length - 1] || 'bulbasaur';
-  }, []);
-
+  // Use the useParams hook from Next.js to get the dynamic route parameter.
+  const { name } = useParams<{ name: string }>();
 
   // --- STATE MANAGEMENT ---
   const [pokemon, setPokemon] = useState<Pokemon3D | null>(null);
@@ -98,7 +92,11 @@ export default function PokemonDetail() {
 
   // --- DATA FETCHING EFFECTS ---
   useEffect(() => {
+    // Ensure 'name' is available before fetching
+    if (!name) return;
+
     setIsLoading(true);
+    setError(null);
     setPokemonDetails(null); 
     fetch("https://pokemon-3d-api.onrender.com/v1/pokemon")
       .then(res => res.json())
@@ -195,7 +193,8 @@ export default function PokemonDetail() {
           className="absolute top-4 left-4 z-10 p-2 bg-white/20 rounded-full text-white hover:bg-white/40 backdrop-blur-sm transition-colors focus:outline-none focus:ring-2 focus:ring-white"
           aria-label="Show camera controls"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0
+ 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </button>
