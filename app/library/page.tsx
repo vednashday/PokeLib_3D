@@ -7,50 +7,124 @@ import Link from "next/link";
 const Library = () => {
   const [search, setSearch] = useState("");
   const [pokemon, setPokemon] = useState<{ name: string; url: string }[]>([]);
+  const [types, setTypes] = useState<string[]>([]);
+  const [selectedType, setSelectedType] = useState("all");
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const perPage = 20;
 
   useEffect(() => {
-    fetch("https://pokeapi.co/api/v2/pokemon?limit=151")
+    fetch("https://pokeapi.co/api/v2/pokemon?limit=1000")
       .then((res) => res.json())
       .then((data) => {
         setPokemon(data.results);
       });
-  }, []);
 
-  const filteredPokemon = pokemon.filter((p) =>
-    p.name.toLowerCase().includes(search.toLowerCase())
-  );
+    fetch("https://pokeapi.co/api/v2/type")
+      .then((res) => res.json())
+      .then((data) => {
+        setTypes(data.results.map((t: any) => t.name));
+      });
+  }, []);
 
   const getIdFromUrl = (url: string) => {
     const parts = url.split("/").filter(Boolean);
     return parts[parts.length - 1];
   };
 
+  let filteredPokemon = pokemon.filter((p) =>
+    p.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const [typeMap, setTypeMap] = useState<{ [key: string]: string[] }>({});
+  useEffect(() => {
+    const fetchTypes = async () => {
+      const map: { [key: string]: string[] } = {};
+      for (const t of types) {
+        const res = await fetch(`https://pokeapi.co/api/v2/type/${t}`);
+        const data = await res.json();
+        map[t] = data.pokemon.map((p: any) => p.pokemon.name);
+      }
+      setTypeMap(map);
+    };
+    if (types.length > 0) fetchTypes();
+  }, [types]);
+
+  if (selectedType !== "all" && typeMap[selectedType]) {
+    filteredPokemon = filteredPokemon.filter((p) =>
+      typeMap[selectedType].includes(p.name)
+    );
+  }
+
+  const totalPages = Math.ceil(filteredPokemon.length / perPage);
+  const start = (currentPage - 1) * perPage;
+  const paginatedPokemon = filteredPokemon.slice(start, start + perPage);
+
+  const generatePages = () => {
+    const pages: (number | string)[] = [];
+    pages.push(1);
+
+    if (currentPage > 3) pages.push("...");
+
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(totalPages - 1, currentPage + 1);
+      i++
+    ) {
+      pages.push(i);
+    }
+
+    if (currentPage < totalPages - 2) pages.push("...");
+
+    if (totalPages > 1) pages.push(totalPages);
+
+    return pages;
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-red-900 via-red-800 to-gray-900 p-10 font-mono">
-      {/* Search */}
-      <div className="relative flex justify-around mb-10">
+      <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
         <input
           type="text"
           placeholder="Search Pokémon..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-[60%] bg-yellow-200 text-red-900 text-xl font-extrabold p-4 
-          rounded-none border-4 border-black shadow-[4px_4px_0px_#000] 
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="w-[60%] bg-yellow-200 text-red-900 text-xl font-extrabold p-4
+          rounded-none border-4 border-black shadow-[4px_4px_0px_#000]
           focus:outline-none focus:ring-4 focus:ring-yellow-400"
         />
+
+        <select
+          value={selectedType}
+          onChange={(e) => {
+            setSelectedType(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="px-4 py-3 bg-yellow-200 text-red-900 text-lg font-bold max-h-[20vh] border-4 border-black shadow-[4px_4px_0px_#000] rounded-none overflow-y-auto no-scrollbar"
+        >
+          <option value="all">All Types</option>
+          {types.map((t) => (
+            <option key={t} value={t}>
+              {t}
+            </option>
+          ))}
+        </select>
+
         <Link
           href="/"
-          className="flex px-6 py-3 bg-yellow-200 text-red-900 font-extrabold 
-          items-center text-center border-4 border-black shadow-[4px_4px_0px_#000] 
+          className="px-6 py-3 bg-yellow-200 text-red-900 font-extrabold 
+          border-4 border-black shadow-[4px_4px_0px_#000] 
           text-xl rounded-none hover:bg-yellow-300 transition-colors"
         >
           &larr; Back
         </Link>
       </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 mt-20">
-        {filteredPokemon.map((p, idx) => {
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 mt-10">
+        {paginatedPokemon.map((p, idx) => {
           const id = getIdFromUrl(p.url);
           return (
             <Link href={`/pokemon/${p.name}`} key={p.name}>
@@ -80,6 +154,45 @@ const Library = () => {
             </Link>
           );
         })}
+      </div>
+
+      {/* Pagination Controls */}
+      <div className="flex justify-center mt-10 gap-2 flex-wrap">
+        <button
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((p) => p - 1)}
+          className="px-4 py-2 border-4 border-black text-black font-bold bg-yellow-200 hover:bg-yellow-300 disabled:opacity-50"
+        >
+          &lt;
+        </button>
+
+        {generatePages().map((p, i) =>
+          typeof p === "number" ? (
+            <button
+              key={i}
+              onClick={() => setCurrentPage(p)}
+              className={`px-4 py-2 border-4 border-black font-bold ${
+                currentPage === p
+                  ? "bg-yellow-400 text-red-900 shadow-[4px_4px_0px_#000]"
+                  : "bg-yellow-200 text-red-900 hover:bg-yellow-300"
+              }`}
+            >
+              {p}
+            </button>
+          ) : (
+            <span key={i} className="px-3 text-yellow-200 font-bold">
+              {p}
+            </span>
+          )
+        )}
+
+        <button
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage((p) => p + 1)}
+          className="px-4 py-2 border-4 border-black text-black font-bold bg-yellow-200 hover:bg-yellow-300 disabled:opacity-50"
+        >
+          &gt;
+        </button>
       </div>
     </div>
   );

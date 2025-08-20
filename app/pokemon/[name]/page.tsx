@@ -8,7 +8,6 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import Loader from "../../../src/components/Loader"; // Assuming Loader is in src/components/Loader.tsx
 
-// --- TYPE DEFINITIONS ---
 type PokemonForm = { name: string; model: string; formName: string };
 type Pokemon3D = { id: number; forms: PokemonForm[] };
 type PokemonStat = { base_stat: number; stat: { name: string; }; };
@@ -16,7 +15,6 @@ type PokemonType = { type: { name: string; }; };
 type PokemonAbility = { ability: { name: string; }; };
 type PokemonDetails = { id: number; stats: PokemonStat[]; types: PokemonType[]; abilities: PokemonAbility[]; sprites: { front_default: string; }; };
 
-// --- MOCK DATA & CONFIG ---
 const typeColors: { [key: string]: string } = {
     normal: "bg-gray-400",
     fire: "bg-red-500",
@@ -41,9 +39,6 @@ const typeColors: { [key: string]: string } = {
 
 // --- UI COMPONENTS ---
 
-
-
-// Error boundary specifically for the 3D model
 class ModelErrorBoundary extends Component<{ children: React.ReactNode }, { hasError: boolean }> {
   constructor(props: { children: React.ReactNode }) { super(props); this.state = { hasError: false }; }
   static getDerivedStateFromError(_: Error) { return { hasError: true }; }
@@ -60,7 +55,6 @@ class ModelErrorBoundary extends Component<{ children: React.ReactNode }, { hasE
   }
 }
 
-// Component to load and display the 3D model
 function PokemonModel({ url }: { url: string }) {
   const { scene } = useGLTF(url);
   const { scale, position } = useMemo(() => {
@@ -75,12 +69,9 @@ function PokemonModel({ url }: { url: string }) {
   return <primitive object={scene} scale={scale} position={position} />;
 }
 
-// --- MAIN PAGE COMPONENT ---
 export default function PokemonDetail() {
-  // Use the useParams hook from Next.js to get the dynamic route parameter.
   const { name } = useParams<{ name: string }>();
 
-  // --- STATE MANAGEMENT ---
   const [pokemon, setPokemon] = useState<Pokemon3D | null>(null);
   const [selectedForm, setSelectedForm] = useState<PokemonForm | null>(null);
   const [pokemonDetails, setPokemonDetails] = useState<PokemonDetails | null>(null);
@@ -90,9 +81,7 @@ export default function PokemonDetail() {
   const [error, setError] = useState<string | null>(null);
   const [isControlsInfoVisible, setIsControlsInfoVisible] = useState(false);
 
-  // --- DATA FETCHING EFFECTS ---
   useEffect(() => {
-    // Ensure 'name' is available before fetching
     if (!name) return;
 
     setIsLoading(true);
@@ -136,7 +125,6 @@ export default function PokemonDetail() {
       .finally(() => setIsLoading(false));
   }, [pokemon]);
 
-  // --- RENDER LOGIC ---
   if (isLoading) {
     return <Loader />;
   }
@@ -341,7 +329,6 @@ export default function PokemonDetail() {
           )}
         </div>
 
-        {/* Navigation */}
         <div className="mt-8 pt-6 border-t border-gray-300 flex justify-between items-center gap-2">
           {prevPokemon ? (
             <Link

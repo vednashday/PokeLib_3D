@@ -36,17 +36,14 @@ body {
   animation: gradient 15s ease infinite;
 }
 
-/* Squiggly lines */
-@keyframes moveUp {
-  0% { transform: translateY(100%); }
-  100% { transform: translateY(-100%); }
-}
 
-.squiggle {
-  position: absolute;
-  width: 200%;
-  height: 200%;
-  background: url("/squiggles.svg") repeat;
-  opacity: 0.2;
-  animation: moveUp 20s linear infinite;
+@import "tailwindcss";
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
