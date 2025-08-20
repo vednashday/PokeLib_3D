@@ -5,6 +5,7 @@ import { OrbitControls, useGLTF, Grid } from "@react-three/drei";
 import React, { useEffect, useState, Suspense, useMemo, Component, ErrorInfo } from "react";
 import { Box3, Vector3 } from "three";
 import Loader from "../../../src/components/Loader";
+import Link from "next/link";
 
 // --- TYPE DEFINITIONS ---
 type PokemonForm = { name: string; model: string; formName: string };
@@ -146,9 +147,9 @@ export default function PokemonDetail() {
     return (
       <div className="p-10 text-center">
         <p className="text-red-600 text-xl font-semibold mb-4">{error || "Failed to load Pokémon."}</p>
-        <a href="/" className="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors">
+        <Link href="/" className="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors">
             &larr; Back to Library
-        </a>
+        </Link>
       </div>
     );
   }
@@ -241,12 +242,12 @@ export default function PokemonDetail() {
       {/* Details Section */}
       <div className="flex-1 bg-gradient-to-b from-gray-100 to-gray-300 p-4 md:p-8 flex flex-col justify-between overflow-y-auto">
         <div className="mb-5">
-          <a
+          <Link
             href="/"
             className="px-4 py-2 bg-gray-300 text-gray-800 font-semibold rounded-lg hover:bg-gray-400 transition-colors"
           >
             &larr; Back to Main Menu
-          </a>
+          </Link>
         </div>
 
         {/* Pokémon Info */}
@@ -344,7 +345,7 @@ export default function PokemonDetail() {
         {/* Navigation */}
         <div className="mt-8 pt-6 border-t border-gray-300 flex justify-between items-center gap-2">
           {prevPokemon ? (
-            <a
+            <Link
               href={`/pokemon/${prevPokemon.forms[0].name.toLowerCase()}`}
               className="flex items-center gap-2 px-3 py-2 md:px-4 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 transition-colors"
             >
@@ -353,12 +354,12 @@ export default function PokemonDetail() {
                 <p className="text-xs text-red-200">Previous</p>
                 <p className="font-bold capitalize">{prevPokemon.forms[0].name}</p>
               </div>
-            </a>
+            </Link>
           ) : (
             <div />
           )}
           {nextPokemon ? (
-            <a
+            <Link
               href={`/pokemon/${nextPokemon.forms[0].name.toLowerCase()}`}
               className="flex items-center gap-2 px-3 py-2 md:px-4 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 transition-colors text-right"
             >
@@ -367,7 +368,7 @@ export default function PokemonDetail() {
                 <p className="font-bold capitalize">{nextPokemon.forms[0].name}</p>
               </div>
               <span className="text-xl">&rarr;</span>
-            </a>
+            </Link>
           ) : (
             <div />
           )}
