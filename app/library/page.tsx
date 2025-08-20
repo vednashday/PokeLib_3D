@@ -23,7 +23,7 @@ const Library = () => {
     fetch("https://pokeapi.co/api/v2/type")
       .then((res) => res.json())
       .then((data) => {
-        setTypes(data.results.map((t: any) => t.name));
+        setTypes(data.results.map((t: { name: string }) => t.name));
       });
   }, []);
 
@@ -43,7 +43,7 @@ const Library = () => {
       for (const t of types) {
         const res = await fetch(`https://pokeapi.co/api/v2/type/${t}`);
         const data = await res.json();
-        map[t] = data.pokemon.map((p: any) => p.pokemon.name);
+        map[t] = data.pokemon.map((p: { pokemon: { name: string } }) => p.pokemon.name);
       }
       setTypeMap(map);
     };
